@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import seiji.prog39402finalproject.R
 import seiji.prog39402finalproject.databinding.FragmentHomeBinding
+import seiji.prog39402finalproject.presentation.inspect.InspectFragment
 
 class HomeFragment : Fragment() {
 
@@ -21,6 +22,15 @@ class HomeFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         return FragmentHomeBinding.inflate(inflater).apply {
+            fragPager.adapter = FragmentPagerAdapter(
+                parentFragmentManager,
+                lifecycle,
+                arrayOf(
+                    MapFragment(),
+                    InspectFragment()
+                )
+            )
+
             buttonDrop.setOnClickListener {
                 findNavController().navigate(R.id.action_homeFragment_to_dropFragment)
             }

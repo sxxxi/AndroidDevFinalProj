@@ -111,6 +111,7 @@ class MapFragment : Fragment(), OnMarkerClickListener {
          */
         map = googleMap
         map.setOnMarkerClickListener(this)
+        map.uiSettings.isScrollGesturesEnabled = false
 
         var capsuleMarkers = listOf<Marker?>()
 
@@ -205,7 +206,6 @@ class MapFragment : Fragment(), OnMarkerClickListener {
     }
 
     override fun onMarkerClick(p0: Marker): Boolean {
-        p0.remove()
         return true
     }
 }
