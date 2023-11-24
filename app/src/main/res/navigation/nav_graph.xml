@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="seiji.prog39402finalproject.presentation.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_dropFragment"
+            app:destination="@id/dropFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in" />
+        <action
+            android:id="@+id/action_homeFragment_to_inspectFragment"
+            app:destination="@id/inspectFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dropFragment"
+        android:name="seiji.prog39402finalproject.presentation.drop.DropFragment"
+        android:label="fragment_drop"
+        tools:layout="@layout/fragment_drop" >
+        <action
+            android:id="@+id/action_dropFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inspectFragment"
+        android:name="seiji.prog39402finalproject.presentation.inspect.InspectFragment"
+        android:label="fragment_inspect"
+        tools:layout="@layout/fragment_inspect" >
+        <action
+            android:id="@+id/action_inspectFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+</navigation>

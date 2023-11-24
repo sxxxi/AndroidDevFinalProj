@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "985547120360",
+    "project_id": "advanced-android-de935",
+    "storage_bucket": "advanced-android-de935.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985547120360:android:3992f1ee45fa8eb7b2735d",
+        "android_client_info": {
+          "package_name": "seiji.prog39402finalproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWvXI71z73sUJoDJxVhrUNVyYYVMwz54I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
