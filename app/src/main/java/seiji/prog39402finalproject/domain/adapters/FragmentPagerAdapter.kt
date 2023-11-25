@@ -1,4 +1,4 @@
-package seiji.prog39402finalproject.presentation.home
+package seiji.prog39402finalproject.domain.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

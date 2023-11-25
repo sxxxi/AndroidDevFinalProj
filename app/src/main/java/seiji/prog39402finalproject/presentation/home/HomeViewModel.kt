@@ -24,8 +24,8 @@ class HomeViewModel(
 
     private var lastRequestCoordinates: LatLng = LatLng(0.0, 0.0)
 
-    private var mutNearbyCapsules = MutableLiveData<List<CapsuleRemoteModel>>(listOf())
-    val nearbyCapsules: LiveData<List<CapsuleRemoteModel>> = mutNearbyCapsules
+    private var mutNearbyCapsules = MutableLiveData<List<Capsule>>(listOf())
+    val nearbyCapsules: LiveData<List<Capsule>> = mutNearbyCapsules
 
 
     init {
@@ -40,26 +40,8 @@ class HomeViewModel(
         mutCurrentLocation.value = newLoc
     }
 
-    fun bounds(center: LatLng): Array<LatLng> {
-        val coef = 10 / 111320.00
-        val lat_max = center.latitude + coef
-        val lat_min = center.latitude - coef
-        val lon_max = center.longitude + coef / cos(Math.PI/180)
-        val lon_min = center.longitude - coef / cos(Math.PI/180)
-
-        return arrayOf(
-            LatLng(lat_max, lon_max),
-            LatLng(lat_max, lon_min),
-            LatLng(lat_min, lon_min),
-            LatLng(lat_min, lon_max),
-            LatLng(lat_max, lon_max),
-        )
-    }
-
     fun attemptGetNearbyCapsules(
         center: LatLng,
-        onSuccess: (List<Capsule>) -> Unit,
-        onFailure: (Throwable) -> Unit
     ) {
         val deltaDist = lastRequestCoordinates.getDistance(center)
         Log.d("NearbyCapsules", "$deltaDist")
@@ -70,9 +52,9 @@ class HomeViewModel(
             center = center,
             onSuccess = {
                 lastRequestCoordinates = center
-                onSuccess(it.map { cap -> capsuleMapper.toDomain(cap) })
+                mutNearbyCapsules.value = it.map { cap -> capsuleMapper.toDomain(cap) }
             },
-            onFailure = onFailure
+            onFailure = {}
         )
     }
 }
