@@ -4,11 +4,13 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.LocationCallback
@@ -20,11 +22,12 @@ import com.google.android.gms.maps.model.LatLng
 import seiji.prog39402finalproject.R
 import seiji.prog39402finalproject.databinding.FragmentHomeBinding
 import seiji.prog39402finalproject.domain.adapters.FragmentPagerAdapter
-import seiji.prog39402finalproject.presentation.home.CapsuleListFragment
+import seiji.prog39402finalproject.presentation.inspect.InspectFragment
 
 class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
+    private lateinit var foo: InspectFragment
 
     @SuppressLint("MissingPermission")
     private val locPollerWithPermissions = registerForActivityResult(
@@ -35,7 +38,7 @@ class HomeFragment : Fragment() {
                 LocationServices.getFusedLocationProviderClient(requireContext()).requestLocationUpdates(
                     LocationRequest.Builder(
                         Priority.PRIORITY_HIGH_ACCURACY,
-                        0
+                        10000
                     )
                         .setWaitForAccurateLocation(true)
                         .build(),
@@ -78,6 +81,18 @@ class HomeFragment : Fragment() {
 
             buttonDrop.setOnClickListener {
                 findNavController().navigate(R.id.action_homeFragment_to_dropFragment)
+            }
+
+            parentFragmentManager.commit {
+                foo = InspectFragment()
+                setReorderingAllowed(true)
+                replace(R.id.inspected_capsule, foo, "BOBBY")
+
+                runOnCommit {
+                    foo.setOnCloseClicked {
+                        viewModel.setFocusedCapsule(null)
+                    }
+                }
             }
         }.root
     }

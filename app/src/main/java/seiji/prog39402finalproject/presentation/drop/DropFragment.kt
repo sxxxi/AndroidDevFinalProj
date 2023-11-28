@@ -19,8 +19,11 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.firebase.geofire.GeoFireUtils
+import com.firebase.geofire.GeoLocation
 import com.google.android.gms.common.api.GoogleApi
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.CurrentLocationRequest
@@ -50,7 +53,7 @@ import kotlin.system.exitProcess
 
 class DropFragment : Fragment() {
 
-    private val viewModel: DropViewModel by viewModels()
+    private lateinit var viewModel: DropViewModel
 
     /**
      * Current coordinates cannot be accessed when [Manifest.permission.ACCESS_FINE_LOCATION]
@@ -88,17 +91,35 @@ class DropFragment : Fragment() {
         override fun onLocationResult(lr: LocationResult) {
             super.onLocationResult(lr)
             lr.lastLocation?.let { loc ->
-                viewModel.updateCapsule { capsule ->
-                    capsule.copy(coord = GeoPoint(loc.latitude, loc.longitude))
-                }
-                Log.d("LOCATION", "${LatLng(loc.latitude, loc.longitude)}")
+                viewModel.updateCapsulePos(LatLng(loc.latitude, loc.longitude))
             }
         }
     }
 
+    private fun buttonInsertHandler(binding: FragmentDropBinding) {
+        viewModel.updateCapsule {
+            it.copy(
+                title = binding.editTitle.text.toString(),
+                body = binding.editBody.text.toString()
+            )
+        }
+        viewModel.createCapsule(
+            onSuccess = {
+                findNavController().navigate(R.id.action_dropFragment_to_homeFragment)
+            },
+            onFailure = {
+                // Display something or whatever
+            }
+        )
+    }
+
+    private fun buttonAddImageHandler(binding: FragmentDropBinding) {
+        findNavController().navigate(R.id.action_dropFragment_to_cameraFragment)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity())[DropViewModel::class.java]
 
         if (ActivityCompat.checkSelfPermission(
                 this@DropFragment.requireContext(),
@@ -115,8 +136,6 @@ class DropFragment : Fragment() {
                 )
             )
         }
-
-
 
         LocationServices.getFusedLocationProviderClient(requireContext()).requestLocationUpdates(
             LocationRequest.Builder(
@@ -137,6 +156,35 @@ class DropFragment : Fragment() {
         )
     }
 
+    @SuppressLint("MissingPermission")
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        // Inflate the layout for this fragment
+        return FragmentDropBinding.inflate(inflater).apply {
+            viewModel.newCapsule.value?.let { capsule ->
+                editTitle.setText(capsule.title)
+                editBody.setText(capsule.body)
+            }
+
+            button.setOnClickListener {
+                buttonInsertHandler(this)
+            }
+
+            buttonAddImage.setOnClickListener {
+                buttonAddImageHandler(this)
+            }
+        }.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.capsuleImages.observe(viewLifecycleOwner) {
+            Log.d(TAG, "IMAGE ADDED: $it")
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         locationUpdateLauncher.launch(arrayOf(
@@ -151,34 +199,7 @@ class DropFragment : Fragment() {
             .removeLocationUpdates(locationReceivedCallback)
     }
 
-
-    @SuppressLint("MissingPermission")
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        return FragmentDropBinding.inflate(inflater).apply {
-            button.setOnClickListener {
-                buttonInsertHandler(this)
-            }
-        }.root
-    }
-
-    private fun buttonInsertHandler(binding: FragmentDropBinding) {
-        viewModel.updateCapsule {
-            it.copy(
-                title = binding.editTitle.text.toString(),
-                body = binding.editBody.text.toString()
-            )
-        }
-        viewModel.createCapsule(
-            onSuccess = {
-                findNavController().navigate(R.id.action_dropFragment_to_homeFragment)
-            },
-            onFailure = {
-               // Display something or whatever
-            }
-        )
+    companion object {
+        private const val TAG = "DropFragment"
     }
 }

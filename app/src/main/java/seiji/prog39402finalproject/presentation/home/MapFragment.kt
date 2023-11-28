@@ -1,53 +1,31 @@
 package seiji.prog39402finalproject.presentation.home
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebSettings.ZoomDensity
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import com.google.android.gms.maps.CameraUpdate
+import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.lifecycleScope
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
-import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.AdvancedMarker
 import com.google.android.gms.maps.model.AdvancedMarkerOptions
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolygonOptions
-import com.google.firebase.firestore.GeoPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import seiji.prog39402finalproject.R
 import seiji.prog39402finalproject.databinding.UserMarkerBinding
-import seiji.prog39402finalproject.presentation.extensions.getDistance
 
 class MapFragment(
 ) : Fragment(), OnMarkerClickListener, OnMapReadyCallback {
@@ -93,14 +71,28 @@ class MapFragment(
                     AdvancedMarkerOptions()
                         .position(cap.coord)
                         .icon(BitmapDescriptorFactory.defaultMarker(50f))
-                        .title(cap.title)
+                        .title(cap.id)
 
                 )
             }
         }
     }
 
-    override fun onMarkerClick(p0: Marker): Boolean {
+    override fun onMarkerClick(marker: Marker): Boolean {
+        val id = marker.title
+
+        viewModel.nearbyCapsules.value?.let {
+            val selected = try {
+                it.first { cap -> cap.id == id }
+            } catch (e: NoSuchElementException) {
+                Log.e(TAG, "HELLO THERE!")
+                null
+            }
+            viewModel.setFocusedCapsule(selected)
+
+        }
+
+
         return true
     }
 
@@ -126,5 +118,9 @@ class MapFragment(
     override fun onStop() {
         super.onStop()
         map.clear()
+    }
+
+    companion object {
+        private const val TAG = "MapFragment"
     }
 }

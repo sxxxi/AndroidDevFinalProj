@@ -1,22 +1,27 @@
 package seiji.prog39402finalproject.presentation.home
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.launch
 import seiji.prog39402finalproject.data.mappers.CapsuleMapper
-import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteRepository
-import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteRepositoryImpl
-import seiji.prog39402finalproject.data.remote.models.CapsuleRemoteModel
+import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteDataSource
+import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteDataSourceImpl
+import seiji.prog39402finalproject.data.remote.firestore.ImageStoreRemoteDataSource
+import seiji.prog39402finalproject.data.remote.firestore.ImageStoreRemoteDataSourceImpl
+import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepository
+import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepositoryImpl
 import seiji.prog39402finalproject.domain.Capsule
-import seiji.prog39402finalproject.presentation.extensions.getDistance
-import kotlin.math.cos
 
 class HomeViewModel(
-    private val capsuleRemoteRepository: CapsuleRemoteRepository = CapsuleRemoteRepositoryImpl(),
+    private val capsuleRepo: CapsuleFirestoreRepository = CapsuleFirestoreRepositoryImpl(),
     private val capsuleMapper: CapsuleMapper = CapsuleMapper()
 ) : ViewModel() {
     private var mutCurrentLocation = MutableLiveData(LatLng(0.0, 0.0))
@@ -27,14 +32,8 @@ class HomeViewModel(
     private var mutNearbyCapsules = MutableLiveData<List<Capsule>>(listOf())
     val nearbyCapsules: LiveData<List<Capsule>> = mutNearbyCapsules
 
-
-    init {
-        // Refresh nearby capsules every 10 seconds
-        viewModelScope.launch {
-
-        }
-    }
-
+    private var mutSelectedCapsule: MutableLiveData<Capsule?> = MutableLiveData(null)
+    val selectedCapsule: LiveData<Capsule?> = mutSelectedCapsule
 
     fun updateLocation(newLoc: LatLng) {
         mutCurrentLocation.value = newLoc
@@ -42,19 +41,32 @@ class HomeViewModel(
 
     fun attemptGetNearbyCapsules(
         center: LatLng,
+        radiusM: Double = 400.0
     ) {
-        val deltaDist = lastRequestCoordinates.getDistance(center)
-        Log.d("NearbyCapsules", "$deltaDist")
-        if (deltaDist <= 5E-5) return
-        Log.d("NearbyCapsules", "Im in")
+        viewModelScope.launch {
+            capsuleRepo.getNearbyCapsules(
+                center = center,
+                radiusM = radiusM,
+                onSuccess = { capsules ->
+                    Log.d("FIRESTORE", capsules.toString())
+                    lastRequestCoordinates = center
+                    mutNearbyCapsules.value = capsules.map { cap -> capsuleMapper.toDomain(cap) }
+                },
+                onFailure = {
+                    Log.e("FIRESTORE", "$it")
+                }
+            )
+        }
+    }
 
-        capsuleRemoteRepository.getNearbyCapsules(
-            center = center,
-            onSuccess = {
-                lastRequestCoordinates = center
-                mutNearbyCapsules.value = it.map { cap -> capsuleMapper.toDomain(cap) }
-            },
-            onFailure = {}
-        )
+    fun setFocusedCapsule(capsule: Capsule?) {
+        mutSelectedCapsule.value = capsule
+    }
+
+    fun getCapsuleImages(
+        capsule: Capsule,
+        onImageReady: (List<Bitmap>) -> Unit
+    ) {
+        capsuleRepo.getImagesFromLinks(capsule.images, onImageReady)
     }
 }

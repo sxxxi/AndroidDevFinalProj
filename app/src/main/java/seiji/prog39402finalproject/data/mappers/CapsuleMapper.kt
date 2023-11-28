@@ -8,21 +8,25 @@ import seiji.prog39402finalproject.domain.Capsule
 class CapsuleMapper : RDMapper<CapsuleRemoteModel, Capsule> {
     override fun toDomain(r: CapsuleRemoteModel): Capsule {
         return Capsule(
-            r.id,
-            r.title,
-            r.body,
-            r.epochCreate,
-            LatLng(r.coord.latitude, r.coord.longitude)
+            id = r.id,
+            title =r.title,
+            body = r.body,
+            epochCreate = r.epochCreate,
+            coord = LatLng(r.coord.latitude, r.coord.longitude),
+            geoHash = r.geoHash,
+            images = r.imageLinks
         )
     }
 
     override fun toRemote(d: Capsule): CapsuleRemoteModel {
         return CapsuleRemoteModel(
-            d.id,
-            d.title,
-            d.body,
-            d.epochCreate,
-            GeoPoint(d.coord.latitude, d.coord.latitude)
+            id = d.id,
+            title = d.title,
+            body = d.body,
+            geoHash = d.geoHash,
+            coord = GeoPoint(d.coord.latitude, d.coord.longitude),
+            epochCreate = d.epochCreate,
+            imageLinks = d.images
         )
     }
 }

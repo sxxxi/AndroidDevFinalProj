@@ -15,7 +15,9 @@
             app:destination="@id/dropFragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@android:anim/fade_in" />
+            app:launchSingleTop="false"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_homeFragment_to_inspectFragment"
             app:destination="@id/inspectFragment" />
@@ -28,6 +30,10 @@
         <action
             android:id="@+id/action_dropFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_dropFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/inspectFragment"
@@ -37,5 +43,14 @@
         <action
             android:id="@+id/action_inspectFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="seiji.prog39402finalproject.presentation.camera.CameraFragment"
+        android:label="fragment_camera"
+        tools:layout="@layout/fragment_camera" >
+        <action
+            android:id="@+id/action_cameraFragment_to_dropFragment"
+            app:destination="@id/dropFragment" />
     </fragment>
 </navigation>

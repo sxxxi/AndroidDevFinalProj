@@ -1,78 +1,69 @@
 package seiji.prog39402finalproject.presentation.drop
 
-import android.content.Context
-import android.util.Log
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.location.LocationServices
+import androidx.lifecycle.viewModelScope
+import com.firebase.geofire.GeoFireUtils
+import com.firebase.geofire.GeoLocation
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteRepository
-import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteRepositoryImpl
-import seiji.prog39402finalproject.data.remote.models.CapsuleRemoteModel
+import kotlinx.coroutines.launch
+import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepository
+import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepositoryImpl
 import seiji.prog39402finalproject.domain.Capsule
-import kotlin.math.cos
+import seiji.prog39402finalproject.domain.forms.CapsuleCreateForm
 
 class DropViewModel(
-    private val capsuleRemoteRepository: CapsuleRemoteRepository = CapsuleRemoteRepositoryImpl()
+    private val capsuleRepository: CapsuleFirestoreRepository = CapsuleFirestoreRepositoryImpl()
 ) : ViewModel() {
 
-    private val mutNewCapsule = MutableLiveData(CapsuleRemoteModel.create())
-    val newCapsule: LiveData<CapsuleRemoteModel> = mutNewCapsule
+    private val mutNewCapsule = MutableLiveData(Capsule())
+    val newCapsule: LiveData<Capsule> = mutNewCapsule
+
+    private val mutCapsuleImages = MutableLiveData<List<Bitmap>>(listOf())
+    val capsuleImages: LiveData<List<Bitmap>> = mutCapsuleImages
 
 
-    fun updateCapsule(updater: (CapsuleRemoteModel) -> CapsuleRemoteModel) {
+    fun updateCapsule(updater: (Capsule) -> Capsule) {
         newCapsule.value?.let { copy ->
             mutNewCapsule.value = updater(copy)
         }
     }
 
+    fun updateCapsulePos(pos: LatLng) {
+        val hash = GeoFireUtils.getGeoHashForLocation(GeoLocation(pos.latitude, pos.longitude),9)
+        updateCapsule { it.copy(
+            geoHash = hash,
+            coord = pos
+        ) }
+    }
+
+    fun queueImage(bitmap: Bitmap) {
+        mutCapsuleImages.value?.let { images ->
+            mutCapsuleImages.value = images.toMutableList() + bitmap
+        }
+    }
+
     fun createCapsule(
-        onSuccess: (DocumentReference) -> Unit,
+        onSuccess: () -> Unit,
         onFailure: (Throwable) -> Unit
     ) {
-        // Validate fields here but ain't nobody got time for that
-        newCapsule.value?.let { newCap ->
-            capsuleRemoteRepository.createCapsule(
-                capsule = newCap,
+        val capsule = newCapsule.value
+        val images = capsuleImages.value
+
+        if (capsule == null || images == null) return
+
+        viewModelScope.launch {
+            capsuleRepository.dropCapsule(
+                CapsuleCreateForm(
+                    newCapsule = capsule,
+                    images = images
+                ),
                 onSuccess = onSuccess,
                 onFailure = onFailure
             )
         }
-    }
-
-    fun getNearbyCapsules(coordinates: LatLng) {
-        val db = Firebase.firestore
-
-        // Get Longitude and latitude 5m
-        val coef = 10 / 111320.00
-        val lat_max = coordinates.latitude + coef
-        val lat_min = coordinates.latitude - coef
-        val lon_max = coordinates.longitude + coef / cos(Math.PI/180)
-        val lon_min = coordinates.longitude - coef / cos(Math.PI/180)
-
-        Log.d("COORD", "($lat_max, $lon_min)")
-
-        db.collection("capsule")
-            .whereLessThanOrEqualTo("coord.latitude", lat_max)
-            .whereGreaterThanOrEqualTo("coord.latitude", lat_min)
-            .get()
-            .addOnSuccessListener { snapshot ->
-                // Filter on longitude locally
-                val filteredDocuments = snapshot.documents.filter { document ->
-                    val docLatitude = document.getDouble("coord.latitude") ?: 0.0
-                    val docLongitude = document.getDouble("coord.longitude") ?: 0.0
-                    docLongitude in lon_min..lon_max
-                }
-
-                Log.d("SUCCESS", filteredDocuments.size.toString())
-            }
-            .addOnFailureListener {
-                Log.d("FAILURE", it.toString())
-            }
-
     }
 }

@@ -16,15 +16,7 @@ import seiji.prog39402finalproject.domain.adapters.CapsulePreviewAdapter
 class CapsuleListFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
-    private var nearbyCapsules: List<Capsule> = listOf(
-        Capsule(
-            id = "",
-            title = "HI",
-            body = "BODY",
-            coord = LatLng(0.0, 0.0),
-            epochCreate = System.currentTimeMillis()
-        )
-    )
+    private var nearbyCapsules: List<Capsule> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
