@@ -8,9 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.maps.model.LatLng
 import seiji.prog39402finalproject.databinding.FragmetCapsuleListBinding
-import seiji.prog39402finalproject.domain.Capsule
+import seiji.prog39402finalproject.domain.models.Capsule
 import seiji.prog39402finalproject.domain.adapters.CapsulePreviewAdapter
 
 class CapsuleListFragment : Fragment() {
@@ -30,16 +29,9 @@ class CapsuleListFragment : Fragment() {
         return FragmetCapsuleListBinding.inflate(inflater).apply {
             viewModel.nearbyCapsules.observe(viewLifecycleOwner) { capsules ->
                 nearbyCapsules = capsules
-                recyclerListCapsules.adapter = CapsulePreviewAdapter(nearbyCapsules)
+                recyclerListCapsules.adapter = CapsulePreviewAdapter(nearbyCapsules, viewModel::setFocusedCapsule)
                 recyclerListCapsules.layoutManager = LinearLayoutManager(requireContext())
             }
         }.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.currentLocation.observe(viewLifecycleOwner) {
-            Log.d("INSEPC", "$it")
-        }
     }
 }

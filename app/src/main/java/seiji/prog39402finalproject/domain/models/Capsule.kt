@@ -1,4 +1,4 @@
-package seiji.prog39402finalproject.domain
+package seiji.prog39402finalproject.domain.models
 
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLng

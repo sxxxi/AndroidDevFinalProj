@@ -40,7 +40,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/inspected_capsule"
-        android:name="seiji.prog39402finalproject.presentation.inspect.InspectFragment"
+        android:name="seiji.prog39402finalproject.presentation.home.InspectFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

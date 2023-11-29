@@ -1,4 +1,4 @@
-package seiji.prog39402finalproject.data.remote.firestore
+package seiji.prog39402finalproject.data.remote
 
 import android.graphics.Bitmap
 import android.net.Uri

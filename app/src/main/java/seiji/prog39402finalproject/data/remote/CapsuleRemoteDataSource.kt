@@ -1,4 +1,4 @@
-package seiji.prog39402finalproject.data.remote.firestore
+package seiji.prog39402finalproject.data.remote
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.DocumentReference

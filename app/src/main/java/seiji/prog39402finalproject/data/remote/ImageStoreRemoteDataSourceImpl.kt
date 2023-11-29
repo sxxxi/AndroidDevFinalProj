@@ -1,4 +1,4 @@
-package seiji.prog39402finalproject.data.remote.firestore
+package seiji.prog39402finalproject.data.remote
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,7 +10,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.tasks.await
 
 class ImageStoreRemoteDataSourceImpl : ImageStoreRemoteDataSource {
     private val imgRef = Firebase.storage.reference.root.child("/public/capsules/img")

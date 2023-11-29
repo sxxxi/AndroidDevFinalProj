@@ -3,7 +3,7 @@ package seiji.prog39402finalproject.data.mappers
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
 import seiji.prog39402finalproject.data.remote.models.CapsuleRemoteModel
-import seiji.prog39402finalproject.domain.Capsule
+import seiji.prog39402finalproject.domain.models.Capsule
 
 class CapsuleMapper : RDMapper<CapsuleRemoteModel, Capsule> {
     override fun toDomain(r: CapsuleRemoteModel): Capsule {

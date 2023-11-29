@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -22,6 +23,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.common.api.GoogleApi
@@ -46,6 +48,7 @@ import kotlinx.coroutines.runBlocking
 import seiji.prog39402finalproject.R
 import seiji.prog39402finalproject.data.remote.models.CapsuleRemoteModel
 import seiji.prog39402finalproject.databinding.FragmentDropBinding
+import seiji.prog39402finalproject.domain.adapters.CapsuleDropImagePreviewAdapter
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.coroutines.CoroutineContext
@@ -54,6 +57,7 @@ import kotlin.system.exitProcess
 class DropFragment : Fragment() {
 
     private lateinit var viewModel: DropViewModel
+    private lateinit var binding: FragmentDropBinding
 
     /**
      * Current coordinates cannot be accessed when [Manifest.permission.ACCESS_FINE_LOCATION]
@@ -94,6 +98,10 @@ class DropFragment : Fragment() {
                 viewModel.updateCapsulePos(LatLng(loc.latitude, loc.longitude))
             }
         }
+    }
+
+    private fun onAttachmentClicked(clicked: Bitmap) {
+        viewModel.dequeueImage(clicked)
     }
 
     private fun buttonInsertHandler(binding: FragmentDropBinding) {
@@ -163,6 +171,8 @@ class DropFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         return FragmentDropBinding.inflate(inflater).apply {
+            binding = this
+
             viewModel.newCapsule.value?.let { capsule ->
                 editTitle.setText(capsule.title)
                 editBody.setText(capsule.body)
@@ -175,13 +185,21 @@ class DropFragment : Fragment() {
             buttonAddImage.setOnClickListener {
                 buttonAddImageHandler(this)
             }
+
         }.root
     }
 
     override fun onStart() {
         super.onStart()
-        viewModel.capsuleImages.observe(viewLifecycleOwner) {
-            Log.d(TAG, "IMAGE ADDED: $it")
+        viewModel.capsuleImages.observe(viewLifecycleOwner) { images ->
+            binding.apply {
+                imagePreview.adapter = CapsuleDropImagePreviewAdapter(images, ::onAttachmentClicked)
+                imagePreview.layoutManager = LinearLayoutManager(
+                    requireContext(),
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
+            }
         }
     }
 

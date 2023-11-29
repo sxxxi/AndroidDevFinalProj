@@ -55,12 +55,14 @@
         <EditText
             android:id="@+id/edit_body"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="2dp"
             android:background="@null"
             android:ems="10"
             android:foregroundGravity="top"
+            android:freezesText="false"
+            android:gravity="start"
             android:hint="Body"
             android:inputType="text"
             android:textSize="24sp" />
@@ -70,13 +72,13 @@
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <androidx.viewpager2.widget.ViewPager2
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/image_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

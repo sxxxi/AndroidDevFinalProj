@@ -5,7 +5,7 @@
     android:id="@+id/inspect_overlay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.inspect.InspectFragment">
+    tools:context=".presentation.home.InspectFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="400dp"
@@ -77,12 +77,6 @@
                     android:layout_width="16dp"
                     android:layout_height="wrap_content" />
 
-                <Button
-                    android:id="@+id/button_focus_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Delete" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

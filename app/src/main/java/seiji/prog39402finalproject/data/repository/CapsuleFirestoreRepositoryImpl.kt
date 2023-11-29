@@ -6,10 +6,10 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import seiji.prog39402finalproject.data.mappers.CapsuleMapper
-import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteDataSource
-import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteDataSourceImpl
-import seiji.prog39402finalproject.data.remote.firestore.ImageStoreRemoteDataSource
-import seiji.prog39402finalproject.data.remote.firestore.ImageStoreRemoteDataSourceImpl
+import seiji.prog39402finalproject.data.remote.CapsuleRemoteDataSource
+import seiji.prog39402finalproject.data.remote.CapsuleRemoteDataSourceImpl
+import seiji.prog39402finalproject.data.remote.ImageStoreRemoteDataSource
+import seiji.prog39402finalproject.data.remote.ImageStoreRemoteDataSourceImpl
 import seiji.prog39402finalproject.data.remote.models.CapsuleRemoteModel
 import seiji.prog39402finalproject.domain.forms.CapsuleCreateForm
 import java.io.ByteArrayOutputStream
@@ -64,10 +64,10 @@ class CapsuleFirestoreRepositoryImpl(
     }
 
     override fun getImagesFromLinks(
-        links: List<String>,
+        imageLinks: List<String>,
         onImagesLoaded: (List<Bitmap>) -> Unit
     ) {
-        imgStore.getImages(links, onImagesLoaded)
+        imgStore.getImages(imageLinks, onImagesLoaded)
     }
 
     companion object {

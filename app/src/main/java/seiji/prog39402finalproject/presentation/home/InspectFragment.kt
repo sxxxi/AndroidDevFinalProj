@@ -1,6 +1,5 @@
-package seiji.prog39402finalproject.presentation.inspect
+package seiji.prog39402finalproject.presentation.home
 
-import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import seiji.prog39402finalproject.databinding.FragmentInspectBinding
 import seiji.prog39402finalproject.domain.adapters.ImagePagerAdapter
-import seiji.prog39402finalproject.presentation.home.HomeViewModel
 
 
 class InspectFragment : Fragment() {

@@ -1,24 +1,17 @@
 package seiji.prog39402finalproject.presentation.home
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.launch
 import seiji.prog39402finalproject.data.mappers.CapsuleMapper
-import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteDataSource
-import seiji.prog39402finalproject.data.remote.firestore.CapsuleRemoteDataSourceImpl
-import seiji.prog39402finalproject.data.remote.firestore.ImageStoreRemoteDataSource
-import seiji.prog39402finalproject.data.remote.firestore.ImageStoreRemoteDataSourceImpl
 import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepository
 import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepositoryImpl
-import seiji.prog39402finalproject.domain.Capsule
+import seiji.prog39402finalproject.domain.models.Capsule
 
 class HomeViewModel(
     private val capsuleRepo: CapsuleFirestoreRepository = CapsuleFirestoreRepositoryImpl(),

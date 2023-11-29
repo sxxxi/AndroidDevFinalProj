@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +21,6 @@ import com.google.android.gms.maps.model.LatLng
 import seiji.prog39402finalproject.R
 import seiji.prog39402finalproject.databinding.FragmentHomeBinding
 import seiji.prog39402finalproject.domain.adapters.FragmentPagerAdapter
-import seiji.prog39402finalproject.presentation.inspect.InspectFragment
 
 class HomeFragment : Fragment() {
 
@@ -38,7 +36,7 @@ class HomeFragment : Fragment() {
                 LocationServices.getFusedLocationProviderClient(requireContext()).requestLocationUpdates(
                     LocationRequest.Builder(
                         Priority.PRIORITY_HIGH_ACCURACY,
-                        10000
+                        LOCATION_REQUEST_INTERVAL
                     )
                         .setWaitForAccurateLocation(true)
                         .build(),
@@ -109,5 +107,9 @@ class HomeFragment : Fragment() {
         super.onPause()
         LocationServices.getFusedLocationProviderClient(requireContext())
             .removeLocationUpdates(locationReceivedCallback)
+    }
+
+    companion object {
+        const val LOCATION_REQUEST_INTERVAL = 0L
     }
 }

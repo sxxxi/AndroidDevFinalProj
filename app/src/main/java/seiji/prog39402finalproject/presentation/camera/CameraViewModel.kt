@@ -4,9 +4,6 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import seiji.prog39402finalproject.data.remote.firestore.ImageStoreRemoteDataSource
-import seiji.prog39402finalproject.data.remote.firestore.ImageStoreRemoteDataSourceImpl
-import java.io.ByteArrayOutputStream
 
 class CameraViewModel() : ViewModel() {
 

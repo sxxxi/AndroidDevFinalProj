@@ -130,7 +130,7 @@ class CameraFragment : Fragment() {
                 vm.image.value?.let { image ->
                     dvm.queueImage(image)
                     vm.reject()
-                    findNavController().navigate(R.id.action_cameraFragment_to_dropFragment)
+                    findNavController().popBackStack()
                 }
             }
 

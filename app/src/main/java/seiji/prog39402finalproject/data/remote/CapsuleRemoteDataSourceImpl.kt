@@ -1,16 +1,19 @@
-package seiji.prog39402finalproject.data.remote.firestore
+package seiji.prog39402finalproject.data.remote
 
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import seiji.prog39402finalproject.data.remote.firestore.constants.CapsuleCollection
 import seiji.prog39402finalproject.data.remote.models.CapsuleRemoteModel
+import seiji.prog39402finalproject.domain.models.Capsule
+import java.util.Collections
+import java.util.concurrent.atomic.AtomicReferenceArray
 
 class CapsuleRemoteDataSourceImpl : CapsuleRemoteDataSource {
-    private val capsules = Firebase.firestore.collection(CapsuleCollection.name)
+    private val capsules = Firebase.firestore.collection("capsule")
 
     override fun getNearbyCapsules(
         center: LatLng,
@@ -28,13 +31,23 @@ class CapsuleRemoteDataSourceImpl : CapsuleRemoteDataSource {
 
         bounds.forEach { bound ->
            final = final
-                .whereGreaterThanOrEqualTo("geoHash", bound.startHash)
-                .whereLessThanOrEqualTo("geoHash", bound.endHash)
+               .startAt(bound.startHash)
+               .endAt(bound.endHash)
         }
 
         final.get()
             .addOnSuccessListener { doc ->
-                onSuccess(doc.documents.map { CapsuleRemoteModel.from(it) })
+                // Remove false positives
+                val centerG = GeoLocation(center.latitude, center.longitude)
+                val y = doc.documents
+                    .map { CapsuleRemoteModel.from(it) }
+                    .filter { capsule ->
+                        val capsulePoint = GeoLocation(capsule.coord.latitude, capsule.coord.longitude)
+                        val dist = GeoFireUtils.getDistanceBetween(capsulePoint, centerG)
+                        dist <= radiusM
+                    }
+
+                onSuccess(y)
             }
             .addOnFailureListener(onFailure)
     }
