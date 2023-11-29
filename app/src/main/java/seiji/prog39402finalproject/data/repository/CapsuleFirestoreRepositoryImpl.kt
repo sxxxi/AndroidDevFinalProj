@@ -54,8 +54,8 @@ class CapsuleFirestoreRepositoryImpl(
                 capsuleStore.createCapsule(
                     capsule = capsuleMapper.toRemote(updatedCapsule),
                     onSuccess = {
-                       onSuccess()
-                       Log.d(TAG, "Capsule create success")
+                        onSuccess()
+                        Log.d(TAG, "Capsule create success")
                     },
                     onFailure = onFailure
                 )

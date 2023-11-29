@@ -1,8 +1,5 @@
 package seiji.prog39402finalproject.presentation.home
 
-import android.content.res.Resources
-import androidx.fragment.app.Fragment
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,14 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -28,13 +23,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import seiji.prog39402finalproject.R
-import seiji.prog39402finalproject.databinding.UserMarkerBinding
 import seiji.prog39402finalproject.domain.models.Capsule
 
 class MapFragment(
@@ -105,7 +98,8 @@ class MapFragment(
     }
 
     private fun GoogleMap.createCapsuleMarker(capsule: Capsule): Marker? {
-        return ResourcesCompat.getDrawable(resources, R.drawable.msg_bubble, null)?.toBitmap(100, 100)?.let { icon ->
+        return ResourcesCompat.getDrawable(resources, R.drawable.msg_bubble, null)
+            ?.toBitmap(100, 100)?.let { icon ->
             addMarker(
                 AdvancedMarkerOptions()
                     .title(capsule.id)
@@ -137,7 +131,7 @@ class MapFragment(
     override fun onStart() {
         super.onStart()
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-            while(isActive) {
+            while (isActive) {
                 val state = viewLifecycleOwner.lifecycle.currentState
                 if (state == Lifecycle.State.RESUMED) {
                     viewModel.currentLocation.value?.let { loc ->

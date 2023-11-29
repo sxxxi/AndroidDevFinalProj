@@ -11,8 +11,8 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepository
 import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepositoryImpl
-import seiji.prog39402finalproject.domain.models.Capsule
 import seiji.prog39402finalproject.domain.forms.CapsuleCreateForm
+import seiji.prog39402finalproject.domain.models.Capsule
 
 class DropViewModel(
     private val capsuleRepository: CapsuleFirestoreRepository = CapsuleFirestoreRepositoryImpl()
@@ -32,11 +32,13 @@ class DropViewModel(
     }
 
     fun updateCapsulePos(pos: LatLng) {
-        val hash = GeoFireUtils.getGeoHashForLocation(GeoLocation(pos.latitude, pos.longitude),22)
-        updateCapsule { it.copy(
-            geoHash = hash,
-            coord = pos
-        ) }
+        val hash = GeoFireUtils.getGeoHashForLocation(GeoLocation(pos.latitude, pos.longitude), 22)
+        updateCapsule {
+            it.copy(
+                geoHash = hash,
+                coord = pos
+            )
+        }
     }
 
     fun queueImage(bitmap: Bitmap) {

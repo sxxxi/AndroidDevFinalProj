@@ -11,6 +11,7 @@ interface CapsuleRemoteDataSource {
         onSuccess: (List<CapsuleRemoteModel>) -> Unit,
         onFailure: (Throwable) -> Unit
     )
+
     fun createCapsule(
         capsule: CapsuleRemoteModel,
         onSuccess: (DocumentReference) -> Unit = {},

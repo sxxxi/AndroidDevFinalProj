@@ -49,7 +49,7 @@ class InspectFragment : Fragment() {
     private fun updateVisibility() {
         binding.apply {
             val capsule = viewModel.selectedCapsule.value
-            root.visibility = capsule?.let {View.VISIBLE} ?: View.INVISIBLE
+            root.visibility = capsule?.let { View.VISIBLE } ?: View.INVISIBLE
 
             if (capsule != null) {
                 textFocusTitle.text = capsule.title

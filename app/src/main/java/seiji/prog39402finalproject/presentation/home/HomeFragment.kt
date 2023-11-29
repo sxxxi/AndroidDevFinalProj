@@ -4,11 +4,11 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -33,16 +33,17 @@ class HomeFragment : Fragment() {
     ) {
         when {
             it.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                LocationServices.getFusedLocationProviderClient(requireContext()).requestLocationUpdates(
-                    LocationRequest.Builder(
-                        Priority.PRIORITY_HIGH_ACCURACY,
-                        LOCATION_REQUEST_INTERVAL
+                LocationServices.getFusedLocationProviderClient(requireContext())
+                    .requestLocationUpdates(
+                        LocationRequest.Builder(
+                            Priority.PRIORITY_HIGH_ACCURACY,
+                            LOCATION_REQUEST_INTERVAL
+                        )
+                            .setWaitForAccurateLocation(true)
+                            .build(),
+                        locationReceivedCallback,
+                        Looper.getMainLooper()
                     )
-                        .setWaitForAccurateLocation(true)
-                        .build(),
-                    locationReceivedCallback,
-                    Looper.getMainLooper()
-                )
             }
         }
     }
@@ -97,10 +98,12 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        locPollerWithPermissions.launch(arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ))
+        locPollerWithPermissions.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
     }
 
     override fun onPause() {

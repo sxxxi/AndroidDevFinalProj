@@ -4,8 +4,6 @@ import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.ui.unit.dp
-import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.RecyclerView
 import seiji.prog39402finalproject.databinding.ImagePagerLayoutBinding
 

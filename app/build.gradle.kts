@@ -100,5 +100,4 @@ dependencies {
     implementation("androidx.camera:camera-extensions:${cameraxVersion}")
 
 
-
 }

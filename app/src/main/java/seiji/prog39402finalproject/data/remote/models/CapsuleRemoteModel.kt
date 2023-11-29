@@ -2,7 +2,6 @@ package seiji.prog39402finalproject.data.remote.models
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.getField
 
 
 data class CapsuleRemoteModel(

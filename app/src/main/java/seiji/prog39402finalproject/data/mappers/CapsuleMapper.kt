@@ -9,7 +9,7 @@ class CapsuleMapper : RDMapper<CapsuleRemoteModel, Capsule> {
     override fun toDomain(r: CapsuleRemoteModel): Capsule {
         return Capsule(
             id = r.id,
-            title =r.title,
+            title = r.title,
             body = r.body,
             epochCreate = r.epochCreate,
             coord = LatLng(r.coord.latitude, r.coord.longitude),

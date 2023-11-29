@@ -2,57 +2,29 @@ package seiji.prog39402finalproject.presentation.drop
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.firebase.geofire.GeoFireUtils
-import com.firebase.geofire.GeoLocation
-import com.google.android.gms.common.api.GoogleApi
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.CurrentLocationRequest
-import com.google.android.gms.location.Granularity
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import seiji.prog39402finalproject.R
-import seiji.prog39402finalproject.data.remote.models.CapsuleRemoteModel
 import seiji.prog39402finalproject.databinding.FragmentDropBinding
 import seiji.prog39402finalproject.domain.adapters.CapsuleDropImagePreviewAdapter
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import kotlin.coroutines.CoroutineContext
-import kotlin.system.exitProcess
 
 class DropFragment : Fragment() {
 
@@ -73,23 +45,26 @@ class DropFragment : Fragment() {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 false
             ) -> true
+
             else -> false
         }
     }
 
     @SuppressLint("MissingPermission")
-    private val locationUpdateLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-        LocationServices.getFusedLocationProviderClient(requireContext()).requestLocationUpdates(
-            LocationRequest.Builder(
-                Priority.PRIORITY_HIGH_ACCURACY,
-                10000
-            )
-                .setWaitForAccurateLocation(true)
-                .build(),
-            locationReceivedCallback,
-            null
-        )
-    }
+    private val locationUpdateLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            LocationServices.getFusedLocationProviderClient(requireContext())
+                .requestLocationUpdates(
+                    LocationRequest.Builder(
+                        Priority.PRIORITY_HIGH_ACCURACY,
+                        10000
+                    )
+                        .setWaitForAccurateLocation(true)
+                        .build(),
+                    locationReceivedCallback,
+                    null
+                )
+        }
 
     private val locationReceivedCallback = object : LocationCallback() {
         override fun onLocationResult(lr: LocationResult) {
@@ -205,10 +180,12 @@ class DropFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        locationUpdateLauncher.launch(arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ))
+        locationUpdateLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
     }
 
     override fun onPause() {

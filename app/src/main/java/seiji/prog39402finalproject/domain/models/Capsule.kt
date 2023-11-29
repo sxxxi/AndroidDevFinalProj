@@ -1,8 +1,6 @@
 package seiji.prog39402finalproject.domain.models
 
-import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.firestore.GeoPoint
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 

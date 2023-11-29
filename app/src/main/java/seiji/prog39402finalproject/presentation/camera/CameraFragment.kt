@@ -2,10 +2,8 @@ package seiji.prog39402finalproject.presentation.camera
 
 import android.Manifest
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,19 +12,14 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import seiji.prog39402finalproject.R
 import seiji.prog39402finalproject.databinding.FragmentCameraBinding
 import seiji.prog39402finalproject.presentation.drop.DropViewModel
 import java.io.ByteArrayOutputStream
 import java.io.File
-import kotlin.coroutines.coroutineContext
 
 class CameraFragment : Fragment() {
 
@@ -35,16 +28,17 @@ class CameraFragment : Fragment() {
     private lateinit var previewCache: File
 
     private lateinit var binding: FragmentCameraBinding
-    private val permissionChecker = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissisons ->
-        var grant = true
-        permissisons.forEach { permission ->
-            grant = grant && (permission.key in REQUIRED_PERMISSIONS)
+    private val permissionChecker =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissisons ->
+            var grant = true
+            permissisons.forEach { permission ->
+                grant = grant && (permission.key in REQUIRED_PERMISSIONS)
+            }
+
+            if (!grant) return@registerForActivityResult
+
+            startCamera()
         }
-
-        if (!grant) return@registerForActivityResult
-
-        startCamera()
-    }
 
     private fun initialize() {
         permissionChecker.launch(REQUIRED_PERMISSIONS)
@@ -156,11 +150,10 @@ class CameraFragment : Fragment() {
     }
 
 
-
     companion object {
         private const val TAG = "CameraFragment"
         private const val CAPTURE_CACHE = "capture_cache"
-        private val REQUIRED_PERMISSIONS = mutableListOf (
+        private val REQUIRED_PERMISSIONS = mutableListOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
         ).toTypedArray()

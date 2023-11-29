@@ -4,13 +4,9 @@ import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import seiji.prog39402finalproject.data.remote.models.CapsuleRemoteModel
-import seiji.prog39402finalproject.domain.models.Capsule
-import java.util.Collections
-import java.util.concurrent.atomic.AtomicReferenceArray
 
 class CapsuleRemoteDataSourceImpl : CapsuleRemoteDataSource {
     private val capsules = Firebase.firestore.collection("capsule")
@@ -30,9 +26,9 @@ class CapsuleRemoteDataSourceImpl : CapsuleRemoteDataSource {
         var final = capsules.orderBy("geoHash")
 
         bounds.forEach { bound ->
-           final = final
-               .startAt(bound.startHash)
-               .endAt(bound.endHash)
+            final = final
+                .startAt(bound.startHash)
+                .endAt(bound.endHash)
         }
 
         final.get()
@@ -42,7 +38,8 @@ class CapsuleRemoteDataSourceImpl : CapsuleRemoteDataSource {
                 val y = doc.documents
                     .map { CapsuleRemoteModel.from(it) }
                     .filter { capsule ->
-                        val capsulePoint = GeoLocation(capsule.coord.latitude, capsule.coord.longitude)
+                        val capsulePoint =
+                            GeoLocation(capsule.coord.latitude, capsule.coord.longitude)
                         val dist = GeoFireUtils.getDistanceBetween(capsulePoint, centerG)
                         dist <= radiusM
                     }
