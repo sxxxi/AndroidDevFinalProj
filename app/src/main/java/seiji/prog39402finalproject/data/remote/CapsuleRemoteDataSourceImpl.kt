@@ -1,8 +1,10 @@
 package seiji.prog39402finalproject.data.remote
 
+import android.util.Log
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -25,28 +27,64 @@ class CapsuleRemoteDataSourceImpl : CapsuleRemoteDataSource {
 
         var final = capsules.orderBy("geoHash")
 
+        bounds.forEachIndexed { index, it ->
+            Log.d(TAG, "Idx: $index, Hash: ${it.startHash} ~ ${it.endHash}")
+        }
+
         bounds.forEach { bound ->
             final = final
                 .startAt(bound.startHash)
                 .endAt(bound.endHash)
         }
 
-        final.get()
-            .addOnSuccessListener { doc ->
-                // Remove false positives
-                val centerG = GeoLocation(center.latitude, center.longitude)
-                val y = doc.documents
-                    .map { CapsuleRemoteModel.from(it) }
-                    .filter { capsule ->
-                        val capsulePoint =
-                            GeoLocation(capsule.coord.latitude, capsule.coord.longitude)
-                        val dist = GeoFireUtils.getDistanceBetween(capsulePoint, centerG)
-                        dist <= radiusM
-                    }
+        val tasks = bounds.map { bound ->
+            final
+                .startAt(bound.startHash)
+                .endAt(bound.endHash)
+                .get()
+        }
 
-                onSuccess(y)
+        Tasks.whenAllComplete(tasks).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val centerG = GeoLocation(center.latitude, center.longitude)
+                var allCapsules = mutableListOf<CapsuleRemoteModel>()
+                tasks.forEach { task ->
+                    // Capture all received capsules
+                    allCapsules += task.result.documents.map { doc -> CapsuleRemoteModel.from(doc) }
+                }
+
+                // Filter out false positives
+                allCapsules = allCapsules.filter {capsule ->
+                    val capsulePoint =
+                        GeoLocation(capsule.coord.latitude, capsule.coord.longitude)
+                    val dist = GeoFireUtils.getDistanceBetween(capsulePoint, centerG)
+                    dist <= radiusM
+                }.toMutableList()
+
+                onSuccess(allCapsules)
+            } else {
+                onFailure(it.exception!!)
             }
-            .addOnFailureListener(onFailure)
+        }
+
+
+
+//        final.get()
+//            .addOnSuccessListener { doc ->
+//                // Remove false positives
+//                val centerG = GeoLocation(center.latitude, center.longitude)
+//                val y = doc.documents
+//                    .map { CapsuleRemoteModel.from(it) }
+//                    .filter { capsule ->
+//                        val capsulePoint =
+//                            GeoLocation(capsule.coord.latitude, capsule.coord.longitude)
+//                        val dist = GeoFireUtils.getDistanceBetween(capsulePoint, centerG)
+//                        dist <= radiusM
+//                    }
+//
+//                onSuccess(y)
+//            }
+//            .addOnFailureListener(onFailure)
     }
 
     override fun createCapsule(
@@ -57,5 +95,9 @@ class CapsuleRemoteDataSourceImpl : CapsuleRemoteDataSource {
         capsules.add(capsule.toFirestoreMap())
             .addOnSuccessListener(onSuccess)
             .addOnFailureListener(onFailure)
+    }
+
+    companion object {
+        private const val TAG = "CapsuleRemoteDataSourceImpl"
     }
 }
