@@ -20,25 +20,24 @@ class ImageStoreRemoteDataSourceImpl : ImageStoreRemoteDataSource {
         onFailure: (Throwable) -> Unit
     ) {
 
-        if (imageBytes.isEmpty()) {
-            throw IllegalArgumentException("Image list is empty. Why you do this?")
-        }
 
-        val savedImageUrls = mutableListOf<String>()
-        val uploadTasks = mutableListOf<StorageTask<UploadTask.TaskSnapshot>>()
-        val urlGetTasks = mutableListOf<Task<Uri>>()
+            val savedImageUrls = mutableListOf<String>()
+            val uploadTasks = mutableListOf<StorageTask<UploadTask.TaskSnapshot>>()
+            val urlGetTasks = mutableListOf<Task<Uri>>()
 
-        imageBytes.forEach { bytes ->
-            val newRef = imgRef.child(
-                "${bytes.hashCode()}_${System.currentTimeMillis()}.jpg"
-            )
-            uploadTasks += newRef.putBytes(bytes).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    urlGetTasks.add(
-                        newRef.downloadUrl.addOnSuccessListener { uri ->
-                            savedImageUrls += uri.toString()
-                        }
-                    )
+        if (imageBytes.isNotEmpty()) {
+            imageBytes.forEach { bytes ->
+                val newRef = imgRef.child(
+                    "${bytes.hashCode()}_${System.currentTimeMillis()}.jpg"
+                )
+                uploadTasks += newRef.putBytes(bytes).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        urlGetTasks.add(
+                            newRef.downloadUrl.addOnSuccessListener { uri ->
+                                savedImageUrls += uri.toString()
+                            }
+                        )
+                    }
                 }
             }
         }
