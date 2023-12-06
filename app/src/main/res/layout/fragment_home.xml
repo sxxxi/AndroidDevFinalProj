@@ -23,6 +23,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:gravity="center|clip_vertical"
         android:orientation="horizontal"
         android:padding="8dp"

@@ -9,8 +9,8 @@ import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
-import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepository
-import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepositoryImpl
+import seiji.prog39402finalproject.data.repository.capsule.CapsuleFirestoreRepository
+import seiji.prog39402finalproject.data.repository.capsule.CapsuleFirestoreRepositoryImpl
 import seiji.prog39402finalproject.domain.forms.CapsuleCreateForm
 import seiji.prog39402finalproject.domain.models.Capsule
 

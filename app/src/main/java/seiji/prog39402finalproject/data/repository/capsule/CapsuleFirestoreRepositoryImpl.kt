@@ -1,4 +1,4 @@
-package seiji.prog39402finalproject.data.repository
+package seiji.prog39402finalproject.data.repository.capsule
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -6,10 +6,10 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import seiji.prog39402finalproject.data.mappers.CapsuleMapper
-import seiji.prog39402finalproject.data.remote.CapsuleRemoteDataSource
-import seiji.prog39402finalproject.data.remote.CapsuleRemoteDataSourceImpl
-import seiji.prog39402finalproject.data.remote.ImageStoreRemoteDataSource
-import seiji.prog39402finalproject.data.remote.ImageStoreRemoteDataSourceImpl
+import seiji.prog39402finalproject.data.remote.capsule.CapsuleRemoteDataSource
+import seiji.prog39402finalproject.data.remote.capsule.CapsuleRemoteDataSourceImpl
+import seiji.prog39402finalproject.data.remote.capsule.ImageStoreRemoteDataSource
+import seiji.prog39402finalproject.data.remote.capsule.ImageStoreRemoteDataSourceImpl
 import seiji.prog39402finalproject.data.remote.models.CapsuleRemoteModel
 import seiji.prog39402finalproject.domain.forms.CapsuleCreateForm
 import java.io.ByteArrayOutputStream

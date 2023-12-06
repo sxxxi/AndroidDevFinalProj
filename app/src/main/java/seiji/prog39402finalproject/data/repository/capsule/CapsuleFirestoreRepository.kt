@@ -1,4 +1,4 @@
-package seiji.prog39402finalproject.data.repository
+package seiji.prog39402finalproject.data.repository.capsule
 
 import android.graphics.Bitmap
 import com.google.android.gms.maps.model.LatLng
