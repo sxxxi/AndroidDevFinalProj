@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,7 +24,15 @@ android {
         }
     }
 
+    val localConf = Properties().apply {
+        load(project.rootProject.file("local.properties").inputStream())
+    }
+
     buildTypes {
+        debug {
+            isDebuggable = true
+            buildConfigField("String", "WEATHER_API_KEY", "\"${localConf.getProperty("WEATHER_API_KEY")}\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -41,6 +51,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -99,5 +110,12 @@ dependencies {
     implementation("androidx.camera:camera-view:${cameraxVersion}")
     implementation("androidx.camera:camera-extensions:${cameraxVersion}")
 
+    // Retrofit
+    val retrofitVersion = "2.9.0"
+    val moshiVersion = "1.14.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
+    implementation("com.squareup.moshi:moshi:$moshiVersion")
+    implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
 
 }

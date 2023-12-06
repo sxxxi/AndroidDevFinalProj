@@ -1,4 +1,4 @@
-package seiji.prog39402finalproject.data.remote
+package seiji.prog39402finalproject.data.remote.capsule
 
 import android.util.Log
 import com.firebase.geofire.GeoFireUtils
@@ -54,7 +54,7 @@ class CapsuleRemoteDataSourceImpl : CapsuleRemoteDataSource {
                 }
 
                 // Filter out false positives
-                allCapsules = allCapsules.filter {capsule ->
+                allCapsules = allCapsules.filter { capsule ->
                     val capsulePoint =
                         GeoLocation(capsule.coord.latitude, capsule.coord.longitude)
                     val dist = GeoFireUtils.getDistanceBetween(capsulePoint, centerG)
@@ -66,25 +66,6 @@ class CapsuleRemoteDataSourceImpl : CapsuleRemoteDataSource {
                 onFailure(it.exception!!)
             }
         }
-
-
-
-//        final.get()
-//            .addOnSuccessListener { doc ->
-//                // Remove false positives
-//                val centerG = GeoLocation(center.latitude, center.longitude)
-//                val y = doc.documents
-//                    .map { CapsuleRemoteModel.from(it) }
-//                    .filter { capsule ->
-//                        val capsulePoint =
-//                            GeoLocation(capsule.coord.latitude, capsule.coord.longitude)
-//                        val dist = GeoFireUtils.getDistanceBetween(capsulePoint, centerG)
-//                        dist <= radiusM
-//                    }
-//
-//                onSuccess(y)
-//            }
-//            .addOnFailureListener(onFailure)
     }
 
     override fun createCapsule(

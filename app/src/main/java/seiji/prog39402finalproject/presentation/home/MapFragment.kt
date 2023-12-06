@@ -44,17 +44,6 @@ class MapFragment(
         map.setOnMarkerClickListener(this)
         map.uiSettings.isScrollGesturesEnabled = false
 
-//        userMarker = googleMap.addMarker(
-//            AdvancedMarkerOptions()
-//                .position(ZERO_LAT_LNG)
-//                .iconView(UserMarkerBinding.inflate(layoutInflater).root)
-//        )
-
-//        val b = ResourcesCompat.getDrawable(resources, R.drawable.baseline_search_24, null)?.toBitmap(200, 200)
-//        b?.let { bitmap ->
-//            userMarker?.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
-//        }
-
         val circle = googleMap.addCircle(
             CircleOptions()
                 .strokeWidth(PROXIMITY_CIRCLE_STROKE)
@@ -136,8 +125,9 @@ class MapFragment(
                 if (state == Lifecycle.State.RESUMED) {
                     viewModel.currentLocation.value?.let { loc ->
                         delay(NEARBY_CAPSULE_REQUEST_INTERVAL)
-                        Log.d("GREETER", "Hey :)")
+                        Log.d(TAG, "Hey :)")
                         viewModel.attemptGetNearbyCapsules(loc, PROXIMITY_RADIUS)
+                        viewModel.getWeather(loc)
                     }
                 }
             }

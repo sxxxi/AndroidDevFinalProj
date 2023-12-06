@@ -9,27 +9,34 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 import seiji.prog39402finalproject.data.mappers.CapsuleMapper
-import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepository
-import seiji.prog39402finalproject.data.repository.CapsuleFirestoreRepositoryImpl
+import seiji.prog39402finalproject.data.remote.models.WeatherRemoteModel
+import seiji.prog39402finalproject.data.repository.capsule.CapsuleFirestoreRepository
+import seiji.prog39402finalproject.data.repository.capsule.CapsuleFirestoreRepositoryImpl
+import seiji.prog39402finalproject.data.repository.weather.WeatherRepositoryImpl
+import seiji.prog39402finalproject.domain.constants.NetworkServices
 import seiji.prog39402finalproject.domain.models.Capsule
 
 class HomeViewModel(
     private val capsuleRepo: CapsuleFirestoreRepository = CapsuleFirestoreRepositoryImpl(),
-    private val capsuleMapper: CapsuleMapper = CapsuleMapper()
+    private val capsuleMapper: CapsuleMapper = CapsuleMapper(),
+    private val weatherRepositoryImpl: WeatherRepositoryImpl = WeatherRepositoryImpl(NetworkServices.weatherService)
 ) : ViewModel() {
-    private var mutCurrentLocation = MutableLiveData(LatLng(0.0, 0.0))
-    val currentLocation: LiveData<LatLng> = mutCurrentLocation
+    private var _currentLocation = MutableLiveData(LatLng(0.0, 0.0))
+    val currentLocation: LiveData<LatLng> = _currentLocation
 
     private var lastRequestCoordinates: LatLng = LatLng(0.0, 0.0)
 
-    private var mutNearbyCapsules = MutableLiveData<List<Capsule>>(listOf())
-    val nearbyCapsules: LiveData<List<Capsule>> = mutNearbyCapsules
+    private var _nearbyCapsules = MutableLiveData<List<Capsule>>(listOf())
+    val nearbyCapsules: LiveData<List<Capsule>> = _nearbyCapsules
 
-    private var mutSelectedCapsule: MutableLiveData<Capsule?> = MutableLiveData(null)
-    val selectedCapsule: LiveData<Capsule?> = mutSelectedCapsule
+    private var _selectedCapsule: MutableLiveData<Capsule?> = MutableLiveData(null)
+    val selectedCapsule: LiveData<Capsule?> = _selectedCapsule
+
+    private val _currentWeather = MutableLiveData<WeatherRemoteModel?>(null)
+    val currentWeather: LiveData<WeatherRemoteModel?> = _currentWeather
 
     fun updateLocation(newLoc: LatLng) {
-        mutCurrentLocation.value = newLoc
+        _currentLocation.value = newLoc
     }
 
     fun attemptGetNearbyCapsules(
@@ -43,7 +50,7 @@ class HomeViewModel(
                 onSuccess = { capsules ->
                     Log.d("FIRESTORE", capsules.toString())
                     lastRequestCoordinates = center
-                    mutNearbyCapsules.value = capsules.map { cap -> capsuleMapper.toDomain(cap) }
+                    _nearbyCapsules.value = capsules.map { cap -> capsuleMapper.toDomain(cap) }
                 },
                 onFailure = {
                     Log.e("FIRESTORE", "$it")
@@ -53,7 +60,7 @@ class HomeViewModel(
     }
 
     fun setFocusedCapsule(capsule: Capsule?) {
-        mutSelectedCapsule.value = capsule
+        _selectedCapsule.value = capsule
     }
 
     fun getCapsuleImages(
@@ -61,5 +68,23 @@ class HomeViewModel(
         onImageReady: (List<Bitmap>) -> Unit
     ) {
         capsuleRepo.getImagesFromLinks(capsule.images, onImageReady)
+    }
+
+    fun getWeather(coordinates: LatLng) {
+        viewModelScope.launch {
+            weatherRepositoryImpl.getCoordinateWeather(
+                coordinate = coordinates,
+                onSuccess = {
+                    Log.d(TAG, "SUCCESS!!: $it")
+                },
+                onError = {
+                    Log.e(TAG, "Error: $it")
+                }
+            )
+        }
+    }
+
+    companion object {
+        private const val TAG = "HomeViewModel"
     }
 }

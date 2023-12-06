@@ -10,7 +10,8 @@ import seiji.prog39402finalproject.databinding.MainActivityBinding
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(MainActivityBinding.inflate(layoutInflater).root)
+        setContentView(R.layout.main_activity)
+//        setContentView(MainActivityBinding.inflate(layoutInflater).root)
     }
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {

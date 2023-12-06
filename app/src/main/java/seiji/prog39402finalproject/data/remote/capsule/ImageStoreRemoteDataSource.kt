@@ -1,4 +1,4 @@
-package seiji.prog39402finalproject.data.remote
+package seiji.prog39402finalproject.data.remote.capsule
 
 import android.graphics.Bitmap
 
