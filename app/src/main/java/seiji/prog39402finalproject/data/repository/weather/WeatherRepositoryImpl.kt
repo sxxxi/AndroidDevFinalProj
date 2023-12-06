@@ -25,7 +25,6 @@ class WeatherRepositoryImpl(
                 lon = coordinate.longitude
             )
 
-            Log.d("HTTPREQUEST", "${call.request().body()}")
             val res = call.await()
 
             onSuccess(res)

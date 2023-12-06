@@ -127,7 +127,6 @@ class MapFragment(
                         delay(NEARBY_CAPSULE_REQUEST_INTERVAL)
                         Log.d(TAG, "Hey :)")
                         viewModel.attemptGetNearbyCapsules(loc, PROXIMITY_RADIUS)
-                        viewModel.getWeather(loc)
                     }
                 }
             }

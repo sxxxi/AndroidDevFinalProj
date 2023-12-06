@@ -11,7 +11,9 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -19,6 +21,10 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import seiji.prog39402finalproject.R
 import seiji.prog39402finalproject.databinding.FragmentHomeBinding
 import seiji.prog39402finalproject.domain.adapters.FragmentPagerAdapter
@@ -26,6 +32,7 @@ import seiji.prog39402finalproject.domain.adapters.FragmentPagerAdapter
 class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
+    private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var foo: InspectFragment
 
     @SuppressLint("MissingPermission")
@@ -62,6 +69,7 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+        weatherViewModel  = ViewModelProvider(requireActivity())[WeatherViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -74,7 +82,8 @@ class HomeFragment : Fragment() {
                 parentFragmentManager,
                 lifecycle,
                 arrayOf(
-                    MapFragment(),
+                    MapWeatherFragment(),
+//                    MapFragment(),
                     CapsuleListFragment()
                 )
             )
@@ -95,6 +104,21 @@ class HomeFragment : Fragment() {
                 }
             }
         }.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launch(Dispatchers.Default) {
+            while (isActive) {
+                if (lifecycle.currentState == Lifecycle.State.RESUMED) {
+                    delay(5000)
+                    viewModel.currentLocation.value?.let { currentLoc ->
+                        weatherViewModel.getWeather(currentLoc)
+                    }
+                    delay(300000)
+                }
+            }
+        }
     }
 
     override fun onResume() {

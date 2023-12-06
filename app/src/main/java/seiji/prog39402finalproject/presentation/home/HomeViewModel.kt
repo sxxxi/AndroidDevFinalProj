@@ -19,7 +19,6 @@ import seiji.prog39402finalproject.domain.models.Capsule
 class HomeViewModel(
     private val capsuleRepo: CapsuleFirestoreRepository = CapsuleFirestoreRepositoryImpl(),
     private val capsuleMapper: CapsuleMapper = CapsuleMapper(),
-    private val weatherRepositoryImpl: WeatherRepositoryImpl = WeatherRepositoryImpl(NetworkServices.weatherService)
 ) : ViewModel() {
     private var _currentLocation = MutableLiveData(LatLng(0.0, 0.0))
     val currentLocation: LiveData<LatLng> = _currentLocation
@@ -31,9 +30,6 @@ class HomeViewModel(
 
     private var _selectedCapsule: MutableLiveData<Capsule?> = MutableLiveData(null)
     val selectedCapsule: LiveData<Capsule?> = _selectedCapsule
-
-    private val _currentWeather = MutableLiveData<WeatherRemoteModel?>(null)
-    val currentWeather: LiveData<WeatherRemoteModel?> = _currentWeather
 
     fun updateLocation(newLoc: LatLng) {
         _currentLocation.value = newLoc
@@ -70,19 +66,6 @@ class HomeViewModel(
         capsuleRepo.getImagesFromLinks(capsule.images, onImageReady)
     }
 
-    fun getWeather(coordinates: LatLng) {
-        viewModelScope.launch {
-            weatherRepositoryImpl.getCoordinateWeather(
-                coordinate = coordinates,
-                onSuccess = {
-                    Log.d(TAG, "SUCCESS!!: $it")
-                },
-                onError = {
-                    Log.e(TAG, "Error: $it")
-                }
-            )
-        }
-    }
 
     companion object {
         private const val TAG = "HomeViewModel"
